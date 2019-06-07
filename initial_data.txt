@@ -1,0 +1,4 @@
+insert into usuario values (17, null, 'MURILO MEDEIROS', '123123123', 'murilo.dev', '1')
+insert into permissao values (1, 'ADMINISTRADOR')
+insert into empresa values (1,'74.123.123/00001-00', 'THE FANTASY COMPANY')
+insert into grupo values (1, 'DEFAULT')
