@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+<h:head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Cache-Control"
+		content="no-cache,no-store, must-revalidate" />
+	<meta http-equiv='Expires' content='0' />
+	<meta http-equiv='Pragma' content='no-cache' />
+	<h:outputStylesheet library="suportecpl" name="css/style.css" />
+
+	<title>TOOLS</title>
+</h:head>
+<h:body>
+	<!-- <div
+		style="height: 100px; width: 100%; display: block; background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.6) 100%), url('/javax.faces.resource/imagens/differentiated-solutions1.jpg.xhtml?ln=suportecpl'); background-repeat: no-repeat; background-position: center; background-attachment: fixed; background-size: cover;"> -->
+	<h:form>
+		<b:navBar fluid="true"
+			brand-img="/javax.faces.resource/imagens/nh-ico.png.xhtml?ln=suportecpl"
+			brand-img-style="width: 50%; height: auto"
+			brand-href="/ferramentas.xhtml">
+			<b:navbarLinks>
+				<b:dropMenu value="Ordem de Serviço">
+					<b:dropMenu value="Ferramentas" iconAwesome="fa-cog">
+						<b:navLink value="Requisitar" iconAwesome="fa-mail-forward"
+							disabled="true" />
+						<b:navLink value="Devolver" iconAwesome="fa-mail-reply"
+							disabled="true" />
+					</b:dropMenu>
+				</b:dropMenu>
+				<b:dropMenu value="Ferramenta">
+					<b:navLink value="Controle de Ferramentas" iconAwesome="fa-lock"
+						outcome="/ferramentas.xhtml" disabled="#{loginBean.usuario.permissao.id != 17}"/>
+				</b:dropMenu>
+				<b:dropMenu value="Relatório">
+					<b:navLink value="Ferramentas Requisitadas" disabled="true" />
+					<b:navLink value="Ferramentas Devolvidas" disabled="true" />
+					<b:navLink value="Total de Ferramentas em Estoque" disabled="true" />
+					<b:navLink value="OS Pendentes Devolução" disabled="true" />
+				</b:dropMenu>
+				<b:navCommandLink value="Logout" iconAwesome="fa-power-off"
+					actionListener="#{loginBean.efetuarLogout}" process="@this" />
+			</b:navbarLinks>
+		</b:navBar>
+		<div style="width: 100%; text-align: right;padding-right: 20px;">
+			<p style="font-family: 'Roboto', sans-serif; color: #777;">
+				BEM-VINDO <strong>#{loginBean.usuario.nome}</strong>
+			</p>
+		</div>
+	</h:form>
+	<ui:insert name="tools-list" />
+</h:body>
+</html>

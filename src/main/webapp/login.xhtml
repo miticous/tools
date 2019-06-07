@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+<h:head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Cache-Control"
+		content="no-cache,no-store, must-revalidate" />
+	<meta http-equiv='Expires' content='0' />
+	<meta http-equiv='Pragma' content='no-cache' />
+	<h:outputStylesheet library="suportecpl" name="css/style.css" />
+	<title>TOOLS</title>
+</h:head>
+<h:body>
+	<div
+		style="height: 100%; width: 100%; display: table; background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.6) 100%), url('/javax.faces.resource/imagens/differentiated-solutions1.jpg.xhtml?ln=suportecpl'); background-repeat: no-repeat; background-position: center; background-attachment: fixed; position: absolute; background-size: cover; top: 0; left: 0;">
+		<h:form>
+			<b:panel
+				style="width: 300px; height: 400px;margin: 0 auto; position: relative; display: block"
+				collapsible="false">
+				<f:facet name="heading">
+					<h:outputText value="Login" style="font-size: 26px;" />
+				</f:facet>
+				<h:outputText value="Usuário"
+					style="font-size: 20px; font-weight: bold" />
+				<b:inputText value="#{loginBean.username}" />
+				<h:outputText value="Senha"
+					style="font-size: 20px; font-weight: bold" />
+				<b:inputSecret value="#{loginBean.password}" />
+				<b:commandButton look="success" value="Entrar" style="width: 100%" actionListener="#{loginBean.efetuarLogin}"/>
+			</b:panel>
+		</h:form>
+	</div>
+</h:body>
+</html>

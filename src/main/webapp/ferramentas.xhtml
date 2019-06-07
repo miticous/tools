@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:b="http://bootsfaces.net/ui">
+
+
+<ui:composition template="/WEB-INF/templates/temploute.xhtml">
+	<ui:define name="tools-list">
+		<f:metadata>
+			<f:viewAction action="#{ferramentasBean.listaFerramentasPorEmpresa}" />
+		</f:metadata>
+		<b:container fluid="true">
+			<b:column col-lg="12" col-md="12" style="margin-top: 20px;">
+				<h:form id="formFerramenta">
+					<b:column span="12" style="margin-bottom: 20px;">
+						<b:dropButton value="Adicionar" iconAwesome="fa-plus">
+							<b:navLink>
+								<b:commandLink value="Ferramenta" iconAwesome="fa-cog"
+									update="formAdicionarFerramenta"
+									oncomplete="$('.adicionar-ferramenta').modal()" ajax="true"
+									actionListener="#{ferramentasBean.prepararParaAdicionarFerramenta}" />
+							</b:navLink>
+							<b:navLink>
+								<b:commandLink value="Locação" iconAwesome="fa-flag"
+									oncomplete="$('.adicionar-locacao').modal()"
+									update=":formLocacao"
+									actionListener="#{ferramentasBean.prepararNovaLocacao}" />
+							</b:navLink>
+							<b:navLink
+								disabled="#{ferramentasBean.ferramenta.codigo == null}">
+								<b:commandLink value="Estoque" iconAwesome="fa-cubes"
+									oncomplete="$('.adicionar-estoque-ferramenta-modal').modal()"
+									update=":formAdicionarEstoqueFerramenta"
+									disabled="#{ferramentasBean.ferramenta.codigo == null}"
+									actionListener="#{ferramentasBean.prepararAdicionarEstoqueFerramenta}" />
+							</b:navLink>
+						</b:dropButton>
+						<b:dropButton value="Editar" iconAwesome="fa-pencil">
+							<b:navLink
+								disabled="#{ferramentasBean.ferramenta.codigo == null}">
+								<b:commandLink value="Ferramenta" iconAwesome="fa-cog"
+									update=":formEditarFerramenta"
+									actionListener="#{ferramentasBean.preparaEdicaoFerramenta}"
+									oncomplete="$('.editar-ferramenta').modal()"
+									disabled="#{ferramentasBean.ferramenta.codigo == null}" />
+							</b:navLink>
+							<b:navLink
+								disabled="#{ferramentasBean.ferramenta.codigo == null}">
+								<b:commandLink iconAwesome="fa-cubes"
+									actionListener="#{ferramentasBean.prepararEdicaoEstoqueFerramenta}"
+									value="Estoque"
+									disabled="#{ferramentasBean.ferramenta.codigo == null}"
+									oncomplete="$('.editar-estoque-ferramenta-modal').modal()"
+									update=":formEditarEstoqueFerramenta" />
+							</b:navLink>
+						</b:dropButton>
+						<b:dropButton value="Remover" iconAwesome="fa-trash">
+							<b:navLink
+								disabled="#{ferramentasBean.ferramenta.codigo == null}">
+								<b:commandLink value="Ferramenta" iconAwesome="fa-cog"
+									update=":formRemoverFerramenta"
+									disabled="#{ferramentasBean.ferramenta.codigo == null}"
+									oncomplete="$('.confirmacao-remocao-ferramenta-modal').modal()" />
+							</b:navLink>
+							<b:navLink>
+								<b:commandLink value="Locação" iconAwesome="fa-flag"
+									actionListener="#{ferramentasBean.prepararParaRemoverLocacao}"
+									update=":formRemoverLocacao"
+									oncomplete="$('.remover-locacao-modal').modal()" />
+							</b:navLink>
+						</b:dropButton>
+						<b:dropButton value="Filtros" iconAwesome="fa-filter">
+							<b:navCommandLink value="Obrigatorio Sem Estoque"
+								actionListener="#{ferramentasBean.filtrarObrigatoriosSemEstoque}"
+								update=":formFerramenta:tools-list" process="@this" ajax="true" />
+							<b:navCommandLink value="Todas Ferramentas"
+								actionListener="#{ferramentasBean.listaFerramentasPorEmpresa}"
+								update=":formFerramenta:tools-list" process="@this" ajax="true" />
+						</b:dropButton>
+						<b:dropButton value="Facilidades" iconAwesome="fa-codepen">
+							<b:navLink>
+								<b:commandLink value="Estoque via XML" iconAwesome="fa-upload"
+									onclick="$('.importar-xml-estoque').modal()" />
+							</b:navLink>
+						</b:dropButton>
+					</b:column>
+					<b:column span="9">
+						<b:dataTable value="#{ferramentasBean.ferramentas}" var="ferra"
+							id="tools-list"
+							customLangUrl="//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json">
+							<b:dataTableColumn label="Descrição">
+								<b:commandLink
+									onclick="ajax:ferramentasBean.atualizarFerramentaSelecionada(ferra)"
+									update="@form" value="#{ferra.descricao}">
+								</b:commandLink>
+							</b:dataTableColumn>
+							<b:dataTableColumn value="#{ferra.codigoNh}" label="Código Nh" />
+							<b:dataTableColumn value="#{ferra.obrigatorio.descricao}"
+								label="Obrigatório" />
+							<b:dataTableColumn value="#{ferra.grupo.descricao}" label="Grupo" />
+						</b:dataTable>
+					</b:column>
+					<b:column span="3">
+						<p:panelGrid columns="2" id="teste"
+							rendered="#{ferramentasBean.ferramenta.codigo != null}">
+							<f:facet name="header">
+								<b:link value=""
+									onclick="$('.importar-imagem-ferramenta').modal()"
+									iconAwesome="fa-camera">
+									<i class="fa fa-plus" style="font-size: 11px"></i>
+								</b:link>
+								<b:image width="100%" height="200"
+									value="/imagensTools/#{ferramentasBean.ferramenta.codigoNh}.png" />
+							</f:facet>
+
+							<h:outputText value="Código:" style="font-weight: bold" />
+							<h:outputText value="#{ferramentasBean.ferramenta.codigoNh}" />
+
+							<h:outputText value="Descricao:" style="font-weight: bold" />
+							<h:outputText value="#{ferramentasBean.ferramenta.descricao}" />
+
+							<h:outputText value="Estoque" style="font-weight: bold" />
+							<b:link onclick="$('.ferramenta-quantidade-locacao').modal()"
+								value="ver quantidade" />
+
+							<h:outputText value="Preço:" style="font-weight: bold" />
+							<h:outputText value="#{ferramentasBean.ferramenta.preco}">
+								<f:convertNumber currencySymbol="R$" locale="pt_BR"
+									type="currency" />
+							</h:outputText>
+
+							<h:outputText value="Ativa:" style="font-weight: bold" />
+							<h:outputText value="#{ferramentasBean.ferramenta.ativa}" />
+
+							<h:outputText value="Grupo:" style="font-weight: bold" />
+							<h:outputText
+								value="#{ferramentasBean.ferramenta.grupo.descricao}" />
+
+							<h:outputText value="Aplicação:" style="font-weight: bold" />
+							<h:outputText
+								value="#{ferramentasBean.ferramenta.aplicabilidade}" />
+						</p:panelGrid>
+					</b:column>
+					<b:modal title="Quantidade e Locação"
+						styleClass="ferramenta-quantidade-locacao">
+						<p:repeat var="ferramenta"
+							value="#{ferramentasBean.ferramenta.estoques}">
+							<h:outputText value="Empresa: " style="font-weight: bold" />
+							<h:outputText value="#{ferramenta.empresa.descricao}" />
+							<br />
+							<h:outputText value="Quantidade: " style="font-weight: bold" />
+							<h:outputText value="#{ferramenta.quantidade}" />
+							<br />
+							<h:outputText value="Locacao: " style="font-weight: bold" />
+							<h:outputText value="#{ferramenta.locacao.codigoLoc}" />
+							<br />
+							<h:outputText value="Fornecedor: " style="font-weight: bold" />
+							<h:outputText value="#{ferramenta.fornecedor.descricao}" />
+							<br />
+							<h:outputText value="Ultima NF: " style="font-weight: bold" />
+							<b:badge value="#{ferramenta.ultimaNf}" disabled="true" />
+							<br />
+							<hr />
+						</p:repeat>
+					</b:modal>
+				</h:form>
+				<b:modal title="Adicionar Ferramenta"
+					styleClass="adicionar-ferramenta">
+					<h:form id="formAdicionarFerramenta">
+						<b:panel>
+
+							<h:outputText value="Código Nh" />
+							<b:inputText value="#{ferramentasBean.ferramenta.codigoNh}"
+								required="true" requiredMessage="Código NH não pode ser vazio" />
+							<h:outputText value="Descrição" />
+							<b:inputText value="#{ferramentasBean.ferramenta.descricao}"
+								required="true" requiredMessage="Descrição não pode ser vazio" />
+							<h:outputText value="Código Antigo" />
+							<b:inputText value="#{ferramentasBean.ferramenta.codigoAntigo}" />
+							<h:outputText value="Preço" />
+							<b:inputText value="#{ferramentasBean.ferramenta.preco}"
+								mask="decimal" required="true"
+								requiredMessage="Preço não pode ser vazio" />
+							<h:outputText value="Grupo" />
+							<b:selectOneMenu value="#{ferramentasBean.ferramenta.grupo}"
+								required="true" requiredMessage="Grupo não pode ser vazio">
+								<f:selectItem itemLabel=" " />
+								<f:selectItems var="grupo" value="#{ferramentasBean.grupos}"
+									itemLabel="#{grupo.descricao}" itemValue="#{grupo}" />
+							</b:selectOneMenu>
+							<h:outputText value="Obrigatório" />
+							<b:selectOneMenu required="true"
+								requiredMessage="Adicione uma obrigatoriedade"
+								value="#{ferramentasBean.ferramenta.obrigatorio}">
+								<f:selectItem itemLabel=" " />
+								<f:selectItems var="obrigato"
+									value="#{ferramentasBean.tipoObrigatoriedade}"
+									itemLabel="#{obrigato.descricao}" itemValue="#{obrigato}" />
+							</b:selectOneMenu>
+							<h:outputText value="Número NF" />
+							<b:inputText value="#{ferramentasBean.ferramenta.numeroNf}" />
+							<b:selectBooleanCheckbox label="Ativa"
+								value="#{ferramentasBean.ferramenta.ativa}" />
+							<b:messages autoUpdate="true" />
+							<b:commandButton value="ADICIONAR" look="success"
+								actionListener="#{ferramentasBean.adicionarFerramenta}"
+								process="@form" update=":formAdicionarFerramenta" ajax="true" />
+
+						</b:panel>
+					</h:form>
+				</b:modal>
+				<h:form id="formEditarFerramenta">
+					<b:modal title="Editar Ferramenta" styleClass="editar-ferramenta">
+						<div style="width: 50%">
+							<h:outputText value="Código Nh" />
+							<b:inputText value="#{ferramentasBean.ferramenta.codigoNh}" />
+							<h:outputText value="Descrição" />
+							<b:inputText value="#{ferramentasBean.ferramenta.descricao}" />
+							<h:outputText value="Código Antigo" />
+							<b:inputText value="#{ferramentasBean.ferramenta.codigoAntigo}" />
+							<h:outputText value="Preço" />
+							<b:inputText value="#{ferramentasBean.ferramenta.preco}"
+								mask="decimal" />
+							<h:outputText value="Obrigatório" />
+							<b:selectOneMenu
+								value="#{ferramentasBean.ferramenta.obrigatorio}">
+								<f:selectItem itemLabel=" " />
+								<f:selectItems var="obrigato"
+									value="#{ferramentasBean.tipoObrigatoriedade}"
+									itemLabel="#{obrigato.descricao}" itemValue="#{obrigato}" />
+							</b:selectOneMenu>
+							<h:outputText value="Grupo" />
+							<b:selectOneMenu value="#{ferramentasBean.ferramenta.grupo}">
+								<f:selectItem itemLabel=" " />
+								<f:selectItems var="grupo" value="#{ferramentasBean.grupos}"
+									itemLabel="#{grupo.descricao}" itemValue="#{grupo}" />
+							</b:selectOneMenu>
+							<b:selectBooleanCheckbox label="Ativa"
+								value="#{ferramentasBean.ferramenta.ativa}" />
+							<b:commandButton value="SALVAR EDIÇÃO"
+								oncomplete="window.location.replace('/ferramentas.xhtml')"
+								actionListener="#{ferramentasBean.salvarEdicaoFerramenta}"
+								process="@form" update="@form" look="success" />
+						</div>
+					</b:modal>
+				</h:form>
+				<h:form id="formAdicionarEstoqueFerramenta">
+					<b:modal title="Código: #{ferramentasBean.ferramenta.codigoNh}"
+						styleClass="adicionar-estoque-ferramenta-modal">
+						<h:outputText value="Empresa " />
+						<b:selectOneMenu value="#{ferramentasBean.estoque.empresa}"
+							onchange="ajax:ferramentasBean.atualizaListaDeLocacoesPorEmp()"
+							update=":formAdicionarEstoqueFerramenta:adicionar-estoque-ferramenta-locacoes-empresa"
+							process="@this">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="emp" value="#{ferramentasBean.empresas}"
+								itemLabel="#{emp.descricao}" itemValue="#{emp}" />
+						</b:selectOneMenu>
+						<h:outputText value="Locação " />
+						<b:selectOneMenu value="#{ferramentasBean.estoque.locacao}"
+							id="adicionar-estoque-ferramenta-locacoes-empresa">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="loc" value="#{ferramentasBean.locacoes}"
+								itemLabel="#{loc.codigoLoc}" itemValue="#{loc}" />
+						</b:selectOneMenu>
+						<h:outputText value="Quantidade " />
+						<b:inputText value="#{ferramentasBean.estoque.quantidade}"
+							mask="numeric" />
+						<b:messages autoUpdate="true"></b:messages>
+						<b:commandButton value="SALVAR" look="success"
+							actionListener="#{ferramentasBean.adicionarEstoqueFerramenta}"
+							process="@form" update=":formAdicionarEstoqueFerramenta"
+							ajax="true" />
+					</b:modal>
+				</h:form>
+				<h:form id="formEditarEstoqueFerramenta">
+					<b:modal title="Código: #{ferramentasBean.ferramenta.codigoNh}"
+						styleClass="editar-estoque-ferramenta-modal">
+						<h:outputText value="Empresa " />
+						<b:selectOneMenu value="#{ferramentasBean.estoque.empresa}"
+							onchange="ajax:ferramentasBean.selecionarEstoqueFerramentaEdicao()"
+							update=":formEditarEstoqueFerramenta:editar-estoque-ferramenta-locacoes-empresa 
+							:formEditarEstoqueFerramenta:editar-estoque-ferramenta-quantidade 
+							:formEditarEstoqueFerramenta:editar-estoque-ferramenta-locacoes-empresa"
+							process="@this">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="emp" value="#{ferramentasBean.empresas}"
+								itemLabel="#{emp.descricao}" itemValue="#{emp}" />
+						</b:selectOneMenu>
+						<h:outputText value="Locação " />
+						<b:selectOneMenu value="#{ferramentasBean.estoque.locacao}"
+							id="editar-estoque-ferramenta-locacoes-empresa"
+							disabled="#{ferramentasBean.estoque.empresa == null}">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="loc" value="#{ferramentasBean.locacoes}"
+								itemLabel="#{loc.codigoLoc}" itemValue="#{loc}" />
+						</b:selectOneMenu>
+						<h:outputText value="Quantidade " />
+						<b:inputText value="#{ferramentasBean.estoque.quantidade}"
+							disabled="#{ferramentasBean.estoque.empresa == null}"
+							mask="numeric" id="editar-estoque-ferramenta-quantidade" />
+						<h:outputText value="Fornecedor " />
+						<b:selectOneMenu value="#{ferramentasBean.estoque.fornecedor}">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems value="#{ferramentasBean.fornecedores}" var="forn"
+								itemLabel="#{forn.descricao}" itemValue="#{forn}" />
+						</b:selectOneMenu>
+						<b:commandButton value="SALVAR" look="success"
+							actionListener="#{ferramentasBean.salvarEdicaoEstoqueFerramenta}"
+							oncomplete="window.location.replace('/ferramentas.xhtml')"
+							process="@form" update=":formAdicionarEstoqueFerramenta"
+							ajax="true" />
+					</b:modal>
+				</h:form>
+				<h:form id="formRemoverFerramenta">
+					<b:modal title="Remover Ferramenta"
+						styleClass="confirmacao-remocao-ferramenta-modal">
+						<h:outputText value="Confirma remoção da ferramenta "
+							style="color: red; font-size: 24px; font-weight: bold;" />
+						<h:outputText value="#{ferramentasBean.ferramenta.codigoNh}"
+							style="font-size: 24px; font-weight: bold" />
+						<f:facet name="footer">
+							<b:button value="CANCELAR" dismiss="modal" />
+							<b:commandButton look="danger" value="EXCLUIR" process="@form"
+								oncomplete="window.location.replace('/ferramentas.xhtml')"
+								actionListener="#{ferramentasBean.removerFerramenta}"
+								ajax="true" />
+						</f:facet>
+					</b:modal>
+				</h:form>
+				<h:form id="formRemoverLocacao">
+					<b:modal title="Remover Locação" styleClass="remover-locacao-modal">
+						<h:outputText value="Empresa " />
+						<b:selectOneMenu value="#{ferramentasBean.empresa}"
+							onchange="ajax:ferramentasBean.atualizaListaDeLocacoesPorEmp()"
+							update=":formRemoverLocacao:lista-ferramenta-locacoes-empresa"
+							process="@this">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="emp" value="#{ferramentasBean.empresas}"
+								itemLabel="#{emp.descricao}" itemValue="#{emp}" />
+						</b:selectOneMenu>
+						<h:outputText value="Locação " />
+						<b:selectOneMenu value="#{ferramentasBean.locacao}"
+							id="lista-ferramenta-locacoes-empresa">
+							<f:selectItem itemLabel=" " />
+							<f:selectItems var="loc" value="#{ferramentasBean.locacoes}"
+								itemLabel="#{loc.codigoLoc}" itemValue="#{loc}" />
+						</b:selectOneMenu>
+						<f:facet name="footer">
+							<b:button value="CANCELAR" dismiss="modal" />
+							<b:commandButton look="danger" value="EXCLUIR" process="@form"
+								actionListener="#{ferramentasBean.removerLocacao}" ajax="true" />
+						</f:facet>
+					</b:modal>
+				</h:form>
+				<h:form id="formLocacao">
+					<b:modal title="Adicionar Locação" styleClass="adicionar-locacao">
+						<div style="width: 50%">
+							<h:outputText value="Codigo " />
+							<b:inputText value="#{ferramentasBean.locacao.codigoLoc}"
+								id="locacao-codigo" style="text-transform: uppercase" />
+							<h:outputText value="Empresa " />
+							<b:selectOneMenu value="#{ferramentasBean.locacao.empresa}">
+								<f:selectItem itemLabel=" " />
+								<f:selectItems var="empresa" value="#{ferramentasBean.empresas}"
+									itemLabel="#{empresa.descricao}" itemValue="#{empresa}" />
+							</b:selectOneMenu>
+							<f:facet name="footer">
+								<b:button dismiss="modal" value="Cancelar" />
+								<b:commandButton value="SALVAR"
+									actionListener="#{ferramentasBean.adicionarLocacao}"
+									process="@form" look="success" update=":formFerramenta"
+									ajax="false" />
+							</f:facet>
+						</div>
+					</b:modal>
+				</h:form>
+				<h:form id="formImportacaoXml">
+					<b:modal title="Importar XML" styleClass="importar-xml-estoque"
+						size="800">
+						<div style="width: 100%; display: block">
+							<p:fileUpload id="upload"
+								fileUploadListener="#{ferramentasBean.handleFileUpload}"
+								mode="advanced" auto="true" sizeLimit="100000"
+								allowTypes="/(\.|\/)(xml)$/"
+								label="Clique para escolher o arquivo" />
+							<b:messages autoUpdate="true" />
+						</div>
+					</b:modal>
+				</h:form>
+				<h:form id="formImportacaoImagemFerramenta">
+					<b:modal title="Alterar imagem"
+						styleClass="importar-imagem-ferramenta" size="800">
+						<div style="width: 100%; display: block">
+							<p:fileUpload id="upload" update=":formFerramenta"
+								fileUploadListener="#{ferramentasBean.alterarImagemFerramenta}"
+								mode="advanced" auto="true" sizeLimit="100000"
+								allowTypes="/(\.|\/)(png)$/"
+								label="Clique para escolher o arquivo" />
+							<b:messages autoUpdate="true" />
+						</div>
+					</b:modal>
+				</h:form>
+			</b:column>
+		</b:container>
+	</ui:define>
+</ui:composition>
+</html>
